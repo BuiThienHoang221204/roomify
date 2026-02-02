@@ -26,18 +26,15 @@ function getAuthContext(request: NextRequest): AuthContext | null {
   };
 }
 
-// Check if user is authenticated
 export function isAuthenticated(request: NextRequest): boolean {
   return getAuthContext(request) !== null;
 }
 
-// Check if user is admin
 export function isAdmin(request: NextRequest): boolean {
   const auth = getAuthContext(request);
   return auth?.role === UserRole.ADMIN;
 }
 
-// Check if user is tenant
 export function isTenant(request: NextRequest): boolean {
   const auth = getAuthContext(request);
   return auth?.role === UserRole.TENANT;
@@ -52,8 +49,6 @@ export function getCurrentUserId(request: NextRequest): number | null {
 // Middleware function
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-
-  // Public routes that don't require authentication
   const publicRoutes = ['/api/users/login', '/api/webhooks'];
 
   // Check if route is public
@@ -91,7 +86,6 @@ export function middleware(request: NextRequest) {
   return NextResponse.next();
 }
 
-// Configure which paths to run middleware on
 export const config = {
   matcher: '/api/:path*',
 };

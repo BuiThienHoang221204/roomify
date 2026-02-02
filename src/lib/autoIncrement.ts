@@ -1,7 +1,6 @@
 import { google, sheets_v4 } from 'googleapis';
 import { SheetName } from '@/constants/enums';
 
-// Environment variables
 const GOOGLE_SERVICE_ACCOUNT_EMAIL = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
 const GOOGLE_PRIVATE_KEY = process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n');
 const SPREADSHEET_ID = process.env.GOOGLE_SPREADSHEET_ID;
@@ -16,10 +15,7 @@ function getGoogleSheetsClient(): sheets_v4.Sheets {
   return google.sheets({ version: 'v4', auth });
 }
 
-/**
- * Get next auto-increment ID for a table
- * Uses META sheet to track last used IDs
- */
+// Get next auto-increment ID for a table,  Uses META sheet to track last used IDs
 export async function getNextId(tableName: SheetName): Promise<number> {
   const sheets = getGoogleSheetsClient();
   const spreadsheetId = SPREADSHEET_ID || '';
@@ -79,9 +75,7 @@ export async function getNextId(tableName: SheetName): Promise<number> {
   }
 }
 
-/**
- * Initialize META sheet with all table names
- */
+// Initialize META sheet with all table names
 export async function initializeMetaSheet(): Promise<void> {
   const sheets = getGoogleSheetsClient();
   const spreadsheetId = SPREADSHEET_ID || '';
