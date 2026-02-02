@@ -1,36 +1,197 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🏠 ROOMIFY – Smart Rental Management System
 
-## Getting Started
+Roomify là hệ thống quản lý nhà trọ thông minh, hỗ trợ chủ trọ và người thuê trọ trong việc quản lý phòng, điện nước, hóa đơn, thanh toán và sự cố phòng ở. Hệ thống được xây dựng theo kiến trúc Next.js Fullstack, sử dụng Google Sheet như database, tích hợp OCR, QR Payment và Notification.
 
-First, run the development server:
+## 🚀 Tính năng chính
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+### 👤 Người thuê trọ (Tenant)
+- Đăng nhập bằng số điện thoại
+- Quản lý thông tin cá nhân (CCCD, họ tên, ảnh CCCD)
+- Upload ảnh đồng hồ điện / nước (OCR tự đọc số)
+- Xác nhận hoặc chỉnh sửa số điện / nước
+- Xem thống kê tiêu thụ (theo tháng, so sánh nhiều tháng)
+- Xem hóa đơn tiền trọ
+- Thanh toán bằng QR Code (VietQR / Sepay / Momo / ZaloPay)
+- Xem lịch sử thanh toán
+- Nhận thông báo nhắc hạn / quá hạn
+- Gửi yêu cầu sửa chữa, báo sự cố (kèm ảnh/video)
+
+### 🧑‍💼 Chủ trọ (Admin)
+- Quản lý người thuê
+- Quản lý phòng (giá phòng, điện, nước, phụ phí)
+- Quản lý hợp đồng thuê
+- Duyệt / chỉnh sửa số điện nước OCR
+- Quản lý hóa đơn & trạng thái thanh toán
+- Nhận webhook thanh toán từ Sepay
+- Thống kê điện nước, tài chính theo tháng
+- Xuất báo cáo (Excel / PDF)
+- Quản lý sự cố & dịch vụ
+- Gửi nhắc thanh toán tự động (Zalo OA)
+
+## 🧱 Kiến trúc tổng thể
+
+```
+[ Next.js Frontend ]
+        |
+        |  HTTP (fetch / axios)
+        v
+[ Next.js Backend - Route API ]
+        |
+        |  Google Sheets API
+        v
+[ Google Sheet (Database) ]
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 🔹 Giải thích
+- **Frontend**: Next.js (App Router)
+- **Backend**: Next.js Route API (serverless)
+- **Database**: Google Sheet (mỗi sheet = 1 table)
+- **OCR**: Google Vision API / Tesseract OCR
+- **Thanh toán**: Sepay (QR + webhook)
+- **Thông báo**: Zalo OA + Web/App Notification
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🗂️ Database Design (Google Sheet)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 📌 users
+| Field       | Type      | Description          |
+|-------------|-----------|----------------------|
+| user_id     | number    | PK, auto increment   |
+| phone       | string    | login (unique)       |
+| full_name   | string    |                      |
+| cccd        | string    |                      |
+| cccd_image  | string    |                      |
+| role        | enum      | admin / tenant       |
+| created_at  | datetime  |                      |
 
-## Learn More
+### 📌 rooms
+| Field          | Type      | Description          |
+|----------------|-----------|----------------------|
+| room_id        | number    | PK                   |
+| room_code      | string    |                      |
+| price          | number    |                      |
+| electric_price | number    |                      |
+| water_price    | number    |                      |
+| extra_fee      | number    |                      |
+| status         | enum      | vacant, occupied     |
+| admin_id       | number    | FK → users           |
+| created_at     | datetime  |                      |
 
-To learn more about Next.js, take a look at the following resources:
+### 📌 rentals
+| Field      | Type   | Description          |
+|------------|--------|----------------------|
+| rental_id  | number | PK                   |
+| user_id    | number | tenant               |
+| room_id    | number |                      |
+| start_date | date   |                      |
+| end_date   | date   |                      |
+| status     | enum   | renting, ended       |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 📌 meters
+| Field       | Type      | Description          |
+|-------------|-----------|----------------------|
+| meter_id    | number    | PK                   |
+| rental_id   | number    |                      |
+| type        | enum      | electric, water      |
+| month       | YYYY-MM   |                      |
+| old_value   | number    |                      |
+| new_value   | number    |                      |
+| ocr_value   | number    |                      |
+| image_url   | string    |                      |
+| confirmed   | boolean   |                      |
+| created_at  | datetime  |                      |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 📌 invoices
+| Field           | Type      | Description          |
+|-----------------|-----------|----------------------|
+| invoice_id      | number    | PK                   |
+| rental_id       | number    |                      |
+| month           | YYYY-MM   |                      |
+| room_price      | number    |                      |
+| electric_cost   | number    |                      |
+| water_cost      | number    |                      |
+| extra_fee       | number    |                      |
+| total           | number    |                      |
+| payment_method  | enum      |                      |
+| payment_status  | enum      | unpaid, paid, failed |
+| transaction_id  | string    |                      |
+| paid_at         | datetime  |                      |
 
-## Deploy on Vercel
+### 📌 issues
+| Field        | Type      | Description          |
+|--------------|-----------|----------------------|
+| issue_id     | number    | PK                   |
+| rental_id    | number    |                      |
+| title        | string    |                      |
+| description  | text      |                      |
+| media_url    | string    |                      |
+| status       | enum      | pending, processing, done |
+| created_at   | datetime  |                      |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🧩 Backend Structure
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+src/
+├── app/
+│   └── api/
+│       ├── users/
+│       ├── rooms/
+│       ├── rentals/
+│       ├── meters/
+│       ├── invoices/
+│       └── issues/
+├── services/
+│   ├── user.service.ts
+│   ├── room.service.ts
+│   ├── rental.service.ts
+│   ├── meter.service.ts
+│   ├── invoice.service.ts
+│   └── issue.service.ts
+├── lib/
+│   ├── googleSheet.ts
+│   ├── autoIncrement.ts
+│   └── auth.ts
+├── constants/
+│   └── enums.ts
+└── types/
+```
+
+### 🔹 Pattern sử dụng
+- Service viết bằng arrow function
+- Không dùng class
+- Stateless, dễ scale
+- Dễ migrate sang DB thật (MySQL / PostgreSQL)
+
+## 🔐 Authentication
+- Login bằng số điện thoại
+- Phân quyền bằng field `role`
+- Không cần bảng admin riêng
+
+## 💳 Thanh toán
+- Sinh QR VietQR (Sepay / Momo / ZaloPay)
+- Nhận webhook từ Sepay
+- Cập nhật trạng thái hóa đơn real-time
+
+## 🤖 OCR Điện / Nước
+- Upload ảnh đồng hồ
+- OCR trích xuất số
+- User xác nhận trước khi lưu
+- Admin có thể chỉnh sửa nếu sai
+
+## 📈 Định hướng mở rộng
+- Thay Google Sheet bằng PostgreSQL / MongoDB
+- Mobile App (React Native)
+- AI dự đoán tiêu thụ điện nước
+- Auto reminder thông minh
+- Multi-tenant cho nhiều khu trọ
+
+## 🧑‍💻 Tech Stack
+
+| Layer      | Technology              |
+|------------|-------------------------|
+| UI/UX      | Figma                   |
+| Frontend   | Next.js                 |
+| Backend    | Next.js Route API       |
+| Database   | Google Sheet            |
+| OCR        | Google Vision API       |
+| Payment    | Sepay                   |
+| Notification | Zalo OA API           |
