@@ -55,7 +55,7 @@ Roomify là hệ thống quản lý nhà trọ thông minh, hỗ trợ chủ tr�
 ### 📌 users
 | Field       | Type      | Description          |
 |-------------|-----------|----------------------|
-| user_id     | number    | PK, auto increment   |
+| user_id     | string    | PK, auto increment   |
 | phone       | string    | login (unique)       |
 | full_name   | string    |                      |
 | cccd        | string    |                      |
@@ -66,22 +66,22 @@ Roomify là hệ thống quản lý nhà trọ thông minh, hỗ trợ chủ tr�
 ### 📌 rooms
 | Field          | Type      | Description          |
 |----------------|-----------|----------------------|
-| room_id        | number    | PK                   |
+| room_id        | string    | PK                   |
 | room_code      | string    |                      |
 | price          | number    |                      |
 | electric_price | number    |                      |
 | water_price    | number    |                      |
 | extra_fee      | number    |                      |
 | status         | enum      | vacant, occupied     |
-| admin_id       | number    | FK → users           |
+| admin_id       | string    | FK → users           |
 | created_at     | datetime  |                      |
 
 ### 📌 rentals
 | Field      | Type   | Description          |
 |------------|--------|----------------------|
-| rental_id  | number | PK                   |
-| user_id    | number | tenant               |
-| room_id    | number |                      |
+| rental_id  | string | PK                   |
+| user_id    | string | tenant               |
+| room_id    | string |                      |
 | start_date | date   |                      |
 | end_date   | date   |                      |
 | status     | enum   | renting, ended       |
@@ -89,8 +89,8 @@ Roomify là hệ thống quản lý nhà trọ thông minh, hỗ trợ chủ tr�
 ### 📌 meters
 | Field       | Type      | Description          |
 |-------------|-----------|----------------------|
-| meter_id    | number    | PK                   |
-| rental_id   | number    |                      |
+| meter_id    | string    | PK                   |
+| rental_id   | string    |                      |
 | type        | enum      | electric, water      |
 | month       | YYYY-MM   |                      |
 | old_value   | number    |                      |
@@ -103,8 +103,8 @@ Roomify là hệ thống quản lý nhà trọ thông minh, hỗ trợ chủ tr�
 ### 📌 invoices
 | Field           | Type      | Description          |
 |-----------------|-----------|----------------------|
-| invoice_id      | number    | PK                   |
-| rental_id       | number    |                      |
+| invoice_id      | string    | PK                   |
+| rental_id       | string    |                      |
 | month           | YYYY-MM   |                      |
 | room_price      | number    |                      |
 | electric_cost   | number    |                      |
@@ -119,8 +119,8 @@ Roomify là hệ thống quản lý nhà trọ thông minh, hỗ trợ chủ tr�
 ### 📌 issues
 | Field        | Type      | Description          |
 |--------------|-----------|----------------------|
-| issue_id     | number    | PK                   |
-| rental_id    | number    |                      |
+| issue_id     | string    | PK                   |
+| rental_id    | string    |                      |
 | title        | string    |                      |
 | description  | text      |                      |
 | media_url    | string    |                      |
@@ -186,12 +186,12 @@ src/
 
 ## 🧑‍💻 Tech Stack
 
-| Layer      | Technology              |
-|------------|-------------------------|
-| UI/UX      | Figma                   |
-| Frontend   | Next.js                 |
-| Backend    | Next.js Route API       |
-| Database   | Google Sheet            |
-| OCR        | Google Vision API       |
-| Payment    | Sepay                   |
-| Notification | Zalo OA API           |
+| Layer      | Technology                  |
+|------------|-----------------------------|
+| UI/UX      | Figma                       |
+| Frontend   | Next.js                     |
+| Backend    | Next.js Route API           |
+| Database   | Google Sheet                |
+| OCR        | Google Vision API           |
+| Payment    | Sepay | Momo | PayOs | Cash |
+| Notification | Zalo OA API               |
