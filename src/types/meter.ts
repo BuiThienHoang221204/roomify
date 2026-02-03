@@ -1,8 +1,8 @@
 import { MeterType } from '@/constants/enums';
 
 export interface Meter {
-  meter_id: number;
-  rental_id: number;
+  meter_id: string;
+  rental_id: string;
   type: MeterType;
   month: string;
   old_value: number;
@@ -15,7 +15,7 @@ export interface Meter {
 }
 
 export interface CreateMeterDTO {
-  rental_id: number;
+  rental_id: string;
   type: MeterType;
   month: string;
   old_value: number;

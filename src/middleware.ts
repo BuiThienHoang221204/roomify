@@ -4,7 +4,7 @@ import { UserRole } from '@/constants/enums';
 
 // Simple auth context interface
 interface AuthContext {
-  user_id: number;
+  user_id: string; // Changed from number to string to support "user_1" format
   phone: string;
   role: UserRole;
 }
@@ -20,7 +20,7 @@ function getAuthContext(request: NextRequest): AuthContext | null {
   }
 
   return {
-    user_id: parseInt(authHeader, 10),
+    user_id: authHeader,
     role: roleHeader as UserRole,
     phone: phoneHeader || '',
   };
@@ -41,7 +41,7 @@ export function isTenant(request: NextRequest): boolean {
 }
 
 // Get current user ID
-export function getCurrentUserId(request: NextRequest): number | null {
+export function getCurrentUserId(request: NextRequest): string | null {
   const auth = getAuthContext(request);
   return auth?.user_id || null;
 }
@@ -49,10 +49,13 @@ export function getCurrentUserId(request: NextRequest): number | null {
 // Middleware function
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const publicRoutes = ['/api/users/login', '/api/webhooks'];
+  const publicRoutes = ['/api/users/login', '/api/webhooks', '/api/tables'];
+  
+  // Special case: Allow POST to /api/users (user creation)
+  const isUserCreation = pathname === '/api/users' && request.method === 'POST';
 
   // Check if route is public
-  const isPublicRoute = publicRoutes.some((route) => pathname.startsWith(route));
+  const isPublicRoute = publicRoutes.some((route) => pathname.startsWith(route)) || isUserCreation;
 
   if (isPublicRoute) {
     return NextResponse.next();

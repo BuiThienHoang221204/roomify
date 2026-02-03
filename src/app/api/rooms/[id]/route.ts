@@ -2,7 +2,6 @@ import { NextRequest } from 'next/server';
 import { getRoomById, updateRoom, deleteRoom } from '@/services/room.service';
 import {
   successResponse,
-  errorResponse,
   notFoundResponse,
   serverErrorResponse,
 } from '@/lib/response';
@@ -18,13 +17,8 @@ interface RouteParams {
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
-    const roomId = parseInt(id, 10);
 
-    if (isNaN(roomId)) {
-      return errorResponse('Invalid room ID');
-    }
-
-    const room = await getRoomById(roomId);
+    const room = await getRoomById(id);
 
     if (!room) {
       return notFoundResponse('Room not found');
@@ -43,14 +37,9 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
-    const roomId = parseInt(id, 10);
-
-    if (isNaN(roomId)) {
-      return errorResponse('Invalid room ID');
-    }
 
     const body: UpdateRoomDTO = await request.json();
-    const room = await updateRoom(roomId, body);
+    const room = await updateRoom(id, body);
 
     if (!room) {
       return notFoundResponse('Room not found');
@@ -69,13 +58,8 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
-    const roomId = parseInt(id, 10);
 
-    if (isNaN(roomId)) {
-      return errorResponse('Invalid room ID');
-    }
-
-    const deleted = await deleteRoom(roomId);
+    const deleted = await deleteRoom(id);
 
     if (!deleted) {
       return notFoundResponse('Room not found');

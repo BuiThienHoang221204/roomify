@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
     let rooms;
 
     if (adminId) {
-      rooms = await getRoomsByAdminId(parseInt(adminId, 10));
+      rooms = await getRoomsByAdminId(adminId);
     } else if (status === 'vacant') {
       rooms = await getVacantRooms();
     } else {

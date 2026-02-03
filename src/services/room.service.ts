@@ -16,14 +16,14 @@ export const getAllRooms = async (): Promise<Room[]> => {
 /**
  * Get room by ID
  */
-export const getRoomById = async (id: number): Promise<Room | null> => {
+export const getRoomById = async (id: string): Promise<Room | null> => {
   return googleSheet.getById<Room>(SHEET, ID_FIELD, id);
 };
 
 /**
  * Get rooms by admin ID
  */
-export const getRoomsByAdminId = async (adminId: number): Promise<Room[]> => {
+export const getRoomsByAdminId = async (adminId: string): Promise<Room[]> => {
   return googleSheet.getByField<Room>(SHEET, 'admin_id', adminId);
 };
 
@@ -67,20 +67,20 @@ export const createRoom = async (data: CreateRoomDTO): Promise<Room> => {
 /**
  * Update room
  */
-export const updateRoom = async (id: number, data: UpdateRoomDTO): Promise<Room | null> => {
+export const updateRoom = async (id: string, data: UpdateRoomDTO): Promise<Room | null> => {
   return googleSheet.update<Room>(SHEET, ID_FIELD, id, data);
 };
 
 /**
  * Delete room
  */
-export const deleteRoom = async (id: number): Promise<boolean> => {
+export const deleteRoom = async (id: string): Promise<boolean> => {
   return googleSheet.delete(SHEET, ID_FIELD, id);
 };
 
 /**
  * Update room status
  */
-export const updateRoomStatus = async (id: number, status: RoomStatus): Promise<Room | null> => {
+export const updateRoomStatus = async (id: string, status: RoomStatus): Promise<Room | null> => {
   return updateRoom(id, { status });
 };

@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
     let invoices;
 
     if (rentalId) {
-      invoices = await getInvoicesByRentalId(parseInt(rentalId, 10));
+      invoices = await getInvoicesByRentalId(rentalId);
     } else if (status === 'unpaid') {
       invoices = await getUnpaidInvoices();
     } else if (status === 'overdue') {

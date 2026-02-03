@@ -1,7 +1,7 @@
 import { UserRole } from '@/constants/enums';
 
 export interface User {
-  user_id: number;
+  user_id: string;
   phone: string;
   full_name: string;
   cccd: string;

@@ -1,9 +1,9 @@
 import { RentalStatus } from '@/constants/enums';
 
 export interface Rental {
-  rental_id: number;
-  user_id: number;
-  room_id: number;
+  rental_id: string;
+  user_id: string;
+  room_id: string;
   start_date: string;
   end_date: string | null;
   status: RentalStatus;
@@ -11,8 +11,8 @@ export interface Rental {
 }
 
 export interface CreateRentalDTO {
-  user_id: number;
-  room_id: number;
+  user_id: string;
+  room_id: string;
   start_date: string;
   [key: string]: unknown;
 }

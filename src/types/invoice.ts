@@ -1,8 +1,8 @@
 import { PaymentMethod, PaymentStatus } from '@/constants/enums';
 
 export interface Invoice {
-  invoice_id: number;
-  rental_id: number;
+  invoice_id: string;
+  rental_id: string;
   month: string;
   room_price: number;
   electric_cost: number;
@@ -17,7 +17,7 @@ export interface Invoice {
 }
 
 export interface CreateInvoiceDTO {
-  rental_id: number;
+  rental_id: string;
   month: string;
   room_price: number;
   electric_cost: number;

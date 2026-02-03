@@ -2,7 +2,6 @@ import { NextRequest } from 'next/server';
 import { getInvoiceById, updateInvoice, deleteInvoice } from '@/services/invoice.service';
 import {
   successResponse,
-  errorResponse,
   notFoundResponse,
   serverErrorResponse,
 } from '@/lib/response';
@@ -18,13 +17,8 @@ interface RouteParams {
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
-    const invoiceId = parseInt(id, 10);
 
-    if (isNaN(invoiceId)) {
-      return errorResponse('Invalid invoice ID');
-    }
-
-    const invoice = await getInvoiceById(invoiceId);
+    const invoice = await getInvoiceById(id);
 
     if (!invoice) {
       return notFoundResponse('Invoice not found');
@@ -43,14 +37,9 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
-    const invoiceId = parseInt(id, 10);
-
-    if (isNaN(invoiceId)) {
-      return errorResponse('Invalid invoice ID');
-    }
 
     const body: UpdateInvoiceDTO = await request.json();
-    const invoice = await updateInvoice(invoiceId, body);
+    const invoice = await updateInvoice(id, body);
 
     if (!invoice) {
       return notFoundResponse('Invoice not found');
@@ -69,13 +58,8 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
-    const invoiceId = parseInt(id, 10);
 
-    if (isNaN(invoiceId)) {
-      return errorResponse('Invalid invoice ID');
-    }
-
-    const deleted = await deleteInvoice(invoiceId);
+    const deleted = await deleteInvoice(id);
 
     if (!deleted) {
       return notFoundResponse('Invoice not found');

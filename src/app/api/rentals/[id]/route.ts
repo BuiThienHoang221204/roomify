@@ -2,7 +2,6 @@ import { NextRequest } from 'next/server';
 import { getRentalById, updateRental, endRental } from '@/services/rental.service';
 import {
   successResponse,
-  errorResponse,
   notFoundResponse,
   serverErrorResponse,
 } from '@/lib/response';
@@ -18,13 +17,8 @@ interface RouteParams {
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
-    const rentalId = parseInt(id, 10);
 
-    if (isNaN(rentalId)) {
-      return errorResponse('Invalid rental ID');
-    }
-
-    const rental = await getRentalById(rentalId);
+    const rental = await getRentalById(id);
 
     if (!rental) {
       return notFoundResponse('Rental not found');
@@ -43,14 +37,9 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
-    const rentalId = parseInt(id, 10);
-
-    if (isNaN(rentalId)) {
-      return errorResponse('Invalid rental ID');
-    }
 
     const body: UpdateRentalDTO = await request.json();
-    const rental = await updateRental(rentalId, body);
+    const rental = await updateRental(id, body);
 
     if (!rental) {
       return notFoundResponse('Rental not found');
@@ -69,14 +58,9 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
-    const rentalId = parseInt(id, 10);
-
-    if (isNaN(rentalId)) {
-      return errorResponse('Invalid rental ID');
-    }
 
     // End rental instead of deleting
-    const rental = await endRental(rentalId);
+    const rental = await endRental(id);
 
     if (!rental) {
       return notFoundResponse('Rental not found');

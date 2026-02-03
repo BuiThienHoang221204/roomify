@@ -19,21 +19,21 @@ export const getAllInvoices = async (): Promise<Invoice[]> => {
 /**
  * Get invoice by ID
  */
-export const getInvoiceById = async (id: number): Promise<Invoice | null> => {
+export const getInvoiceById = async (id: string): Promise<Invoice | null> => {
   return googleSheet.getById<Invoice>(SHEET, ID_FIELD, id);
 };
 
 /**
  * Get invoices by rental ID
  */
-export const getInvoicesByRentalId = async (rentalId: number): Promise<Invoice[]> => {
+export const getInvoicesByRentalId = async (rentalId: string): Promise<Invoice[]> => {
   return googleSheet.getByField<Invoice>(SHEET, 'rental_id', rentalId);
 };
 
 /**
  * Get invoice by rental and month
  */
-export const getInvoiceByRentalAndMonth = async (rentalId: number, month: string): Promise<Invoice | null> => {
+export const getInvoiceByRentalAndMonth = async (rentalId: string, month: string): Promise<Invoice | null> => {
   const invoices = await getInvoicesByRentalId(rentalId);
   return invoices.find((inv) => inv.month === month) || null;
 };
@@ -89,7 +89,7 @@ export const createInvoice = async (data: CreateInvoiceDTO): Promise<Invoice> =>
 /**
  * Generate invoice for a rental
  */
-export const generateInvoice = async (rentalId: number, month: string): Promise<Invoice> => {
+export const generateInvoice = async (rentalId: string, month: string): Promise<Invoice> => {
   // Get rental and room info
   const rental = await getRentalById(rentalId);
   if (!rental) {
@@ -125,7 +125,7 @@ export const generateInvoice = async (rentalId: number, month: string): Promise<
 /**
  * Update invoice
  */
-export const updateInvoice = async (id: number, data: UpdateInvoiceDTO): Promise<Invoice | null> => {
+export const updateInvoice = async (id: string, data: UpdateInvoiceDTO): Promise<Invoice | null> => {
   return googleSheet.update<Invoice>(SHEET, ID_FIELD, id, data);
 };
 
@@ -133,7 +133,7 @@ export const updateInvoice = async (id: number, data: UpdateInvoiceDTO): Promise
  * Mark invoice as paid
  */
 export const markInvoiceAsPaid = async (
-  id: number,
+  id: string,
   paymentMethod: PaymentMethod,
   transactionId: string
 ): Promise<Invoice | null> => {
@@ -149,7 +149,7 @@ export const markInvoiceAsPaid = async (
 /**
  * Mark invoice as failed
  */
-export const markInvoiceAsFailed = async (id: number): Promise<Invoice | null> => {
+export const markInvoiceAsFailed = async (id: string): Promise<Invoice | null> => {
   return updateInvoice(id, {
     payment_status: PaymentStatus.FAILED,
   });
@@ -158,6 +158,6 @@ export const markInvoiceAsFailed = async (id: number): Promise<Invoice | null> =
 /**
  * Delete invoice
  */
-export const deleteInvoice = async (id: number): Promise<boolean> => {
+export const deleteInvoice = async (id: string): Promise<boolean> => {
   return googleSheet.delete(SHEET, ID_FIELD, id);
 };

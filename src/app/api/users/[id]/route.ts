@@ -2,7 +2,6 @@ import { NextRequest } from 'next/server';
 import { getUserById, updateUser, deleteUser } from '@/services/user.service';
 import {
   successResponse,
-  errorResponse,
   notFoundResponse,
   serverErrorResponse,
 } from '@/lib/response';
@@ -18,13 +17,8 @@ interface RouteParams {
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
-    const userId = parseInt(id, 10);
 
-    if (isNaN(userId)) {
-      return errorResponse('Invalid user ID');
-    }
-
-    const user = await getUserById(userId);
+    const user = await getUserById(id);
 
     if (!user) {
       return notFoundResponse('User not found');
@@ -43,14 +37,9 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
-    const userId = parseInt(id, 10);
-
-    if (isNaN(userId)) {
-      return errorResponse('Invalid user ID');
-    }
 
     const body: UpdateUserDTO = await request.json();
-    const user = await updateUser(userId, body);
+    const user = await updateUser(id, body);
 
     if (!user) {
       return notFoundResponse('User not found');
@@ -69,13 +58,8 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
-    const userId = parseInt(id, 10);
 
-    if (isNaN(userId)) {
-      return errorResponse('Invalid user ID');
-    }
-
-    const deleted = await deleteUser(userId);
+    const deleted = await deleteUser(id);
 
     if (!deleted) {
       return notFoundResponse('User not found');

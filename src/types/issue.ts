@@ -1,8 +1,8 @@
 import { IssueStatus } from '@/constants/enums';
 
 export interface Issue {
-  issue_id: number;
-  rental_id: number;
+  issue_id: string;
+  rental_id: string;
   title: string;
   description: string;
   media_url: string;
@@ -12,7 +12,7 @@ export interface Issue {
 }
 
 export interface CreateIssueDTO {
-  rental_id: number;
+  rental_id: string;
   title: string;
   description: string;
   media_url?: string;

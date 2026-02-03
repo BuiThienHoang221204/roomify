@@ -107,9 +107,9 @@ export async function POST(request: NextRequest) {
  * - "ROOMIFY INV 123"
  * - "ROOMIFY_INV_123"
  * - "INV123"
- * - etc.
+ * - "etc.
  */
-function parseInvoiceIdFromContent(content: string): number | null {
+function parseInvoiceIdFromContent(content: string): string | null {
   if (!content) return null;
 
   // Try different patterns
@@ -123,7 +123,8 @@ function parseInvoiceIdFromContent(content: string): number | null {
   for (const pattern of patterns) {
     const match = content.match(pattern);
     if (match && match[1]) {
-      return parseInt(match[1], 10);
+      // Return normalized ID format "invoice_123"
+      return `invoice_${match[1]}`;
     }
   }
 

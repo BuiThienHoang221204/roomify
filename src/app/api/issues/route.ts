@@ -1,12 +1,12 @@
 import { NextRequest } from 'next/server';
-import { getAllIssues, getIssueById, getIssuesByRentalId, getIssuesByStatus, createIssue, updateIssue } from '@/services/issue.service';
+import { getAllIssues, getIssueById, getIssuesByRentalId, getIssuesByStatus, createIssue } from '@/services/issue.service';
 import {
   successResponse,
   createdResponse,
   errorResponse,
   serverErrorResponse,
 } from '@/lib/response';
-import { CreateIssueDTO, UpdateIssueDTO } from '@/types/issue';
+import { CreateIssueDTO } from '@/types/issue';
 import { IssueStatus } from '@/constants/enums';
 
 /**
@@ -20,14 +20,14 @@ export async function GET(request: NextRequest) {
     const issueId = searchParams.get('issue_id');
 
     if (issueId) {
-      const issue = await getIssueById(parseInt(issueId, 10));
+      const issue = await getIssueById(issueId);
       return successResponse(issue);
     }
 
     let issues;
 
     if (rentalId) {
-      issues = await getIssuesByRentalId(parseInt(rentalId, 10));
+      issues = await getIssuesByRentalId(rentalId);
     } else if (status) {
       issues = await getIssuesByStatus(status as IssueStatus);
     } else {
@@ -64,30 +64,3 @@ export async function POST(request: NextRequest) {
   }
 }
 
-/**
- * PUT /api/issues - Update issue
- */
-export async function PUT(request: NextRequest) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const issueId = searchParams.get('issue_id');
-
-    if (!issueId) {
-      return errorResponse('issue_id is required');
-    }
-
-    const body: UpdateIssueDTO = await request.json();
-    const id = parseInt(issueId, 10);
-
-    const issue = await updateIssue(id, body);
-
-    if (!issue) {
-      return errorResponse('Issue not found');
-    }
-
-    return successResponse(issue, 'Issue updated successfully');
-  } catch (error) {
-    console.error('Error updating issue:', error);
-    return serverErrorResponse();
-  }
-}

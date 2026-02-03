@@ -16,14 +16,14 @@ export const getAllIssues = async (): Promise<Issue[]> => {
 /**
  * Get issue by ID
  */
-export const getIssueById = async (id: number): Promise<Issue | null> => {
+export const getIssueById = async (id: string): Promise<Issue | null> => {
   return googleSheet.getById<Issue>(SHEET, ID_FIELD, id);
 };
 
 /**
  * Get issues by rental ID
  */
-export const getIssuesByRentalId = async (rentalId: number): Promise<Issue[]> => {
+export const getIssuesByRentalId = async (rentalId: string): Promise<Issue[]> => {
   return googleSheet.getByField<Issue>(SHEET, 'rental_id', rentalId);
 };
 
@@ -65,34 +65,34 @@ export const createIssue = async (data: CreateIssueDTO): Promise<Issue> => {
 /**
  * Update issue
  */
-export const updateIssue = async (id: number, data: UpdateIssueDTO): Promise<Issue | null> => {
+export const updateIssue = async (id: string, data: UpdateIssueDTO): Promise<Issue | null> => {
   return googleSheet.update<Issue>(SHEET, ID_FIELD, id, data);
 };
 
 /**
  * Update issue status
  */
-export const updateIssueStatus = async (id: number, status: IssueStatus): Promise<Issue | null> => {
+export const updateIssueStatus = async (id: string, status: IssueStatus): Promise<Issue | null> => {
   return updateIssue(id, { status });
 };
 
 /**
  * Mark issue as processing
  */
-export const markIssueAsProcessing = async (id: number): Promise<Issue | null> => {
+export const markIssueAsProcessing = async (id: string): Promise<Issue | null> => {
   return updateIssueStatus(id, IssueStatus.PROCESSING);
 };
 
 /**
  * Mark issue as done
  */
-export const markIssueAsDone = async (id: number): Promise<Issue | null> => {
+export const markIssueAsDone = async (id: string): Promise<Issue | null> => {
   return updateIssueStatus(id, IssueStatus.DONE);
 };
 
 /**
  * Delete issue
  */
-export const deleteIssue = async (id: number): Promise<boolean> => {
+export const deleteIssue = async (id: string): Promise<boolean> => {
   return googleSheet.delete(SHEET, ID_FIELD, id);
 };

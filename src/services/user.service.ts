@@ -16,7 +16,7 @@ export const getAllUsers = async (): Promise<User[]> => {
 /**
  * Get user by ID
  */
-export const getUserById = async (id: number): Promise<User | null> => {
+export const getUserById = async (id: string): Promise<User | null> => {
   return googleSheet.getById<User>(SHEET, ID_FIELD, id);
 };
 
@@ -65,14 +65,14 @@ export const createUser = async (data: CreateUserDTO): Promise<User> => {
 /**
  * Update user
  */
-export const updateUser = async (id: number, data: UpdateUserDTO): Promise<User | null> => {
+export const updateUser = async (id: string, data: UpdateUserDTO): Promise<User | null> => {
   return googleSheet.update<User>(SHEET, ID_FIELD, id, data);
 };
 
 /**
  * Delete user
  */
-export const deleteUser = async (id: number): Promise<boolean> => {
+export const deleteUser = async (id: string): Promise<boolean> => {
   return googleSheet.delete(SHEET, ID_FIELD, id);
 };
 

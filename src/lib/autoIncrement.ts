@@ -15,10 +15,21 @@ function getGoogleSheetsClient(): sheets_v4.Sheets {
   return google.sheets({ version: 'v4', auth });
 }
 
-// Get next auto-increment ID for a table,  Uses META sheet to track last used IDs
-export async function getNextId(tableName: SheetName): Promise<number> {
+// Get next auto-increment ID for a table with format like "user_1", "room_1", etc.
+export async function getNextId(tableName: SheetName): Promise<string> {
   const sheets = getGoogleSheetsClient();
   const spreadsheetId = SPREADSHEET_ID || '';
+
+  // Map table names to their ID prefixes
+  const tablePrefixes: Record<SheetName, string> = {
+    [SheetName.USERS]: 'user',
+    [SheetName.ROOMS]: 'room', 
+    [SheetName.RENTALS]: 'rental',
+    [SheetName.METERS]: 'meter',
+    [SheetName.INVOICES]: 'invoice',
+    [SheetName.ISSUES]: 'issue',
+    [SheetName.META]: 'meta', // Should not be used normally
+  };
 
   try {
     // Get all META records
@@ -44,7 +55,9 @@ export async function getNextId(tableName: SheetName): Promise<number> {
       }
     }
 
-    const nextId = lastId + 1;
+    const nextIdNumber = lastId + 1;
+    const prefix = tablePrefixes[tableName];
+    const nextId = `${prefix}_${nextIdNumber}`;
 
     if (rowIndex === -1) {
       // Table not in META yet, add it
@@ -53,7 +66,7 @@ export async function getNextId(tableName: SheetName): Promise<number> {
         range: `${SheetName.META}!A:B`,
         valueInputOption: 'USER_ENTERED',
         requestBody: {
-          values: [[tableName, nextId]],
+          values: [[tableName, nextIdNumber]],
         },
       });
     } else {
@@ -63,7 +76,7 @@ export async function getNextId(tableName: SheetName): Promise<number> {
         range: `${SheetName.META}!B${rowIndex + 1}`,
         valueInputOption: 'USER_ENTERED',
         requestBody: {
-          values: [[nextId]],
+          values: [[nextIdNumber]],
         },
       });
     }

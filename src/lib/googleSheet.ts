@@ -27,6 +27,10 @@ const parseValue = (value: string | undefined): unknown => {
   if (value === undefined || value === '') return null;
   if (value === 'true') return true;
   if (value === 'false') return false;
+  
+  // Don't convert strings that look like phone numbers (start with 0 and length > 1)
+  if (value.startsWith('0') && value.length > 1) return value;
+  
   if (!isNaN(Number(value)) && value.trim() !== '') return Number(value);
   return value;
 };
@@ -62,10 +66,14 @@ const getAll = async <T extends SheetRowData>(sheetName: SheetName): Promise<T[]
 const getById = async <T extends SheetRowData>(
   sheetName: SheetName,
   idField: string,
-  id: number
+  id: string
 ): Promise<T | null> => {
   const allRows = await getAll<T>(sheetName);
-  return allRows.find((row) => row[idField] === id) || null;
+  return allRows.find((row) => {
+    const rowIdValue = row[idField];
+    // Compare as strings
+    return String(rowIdValue) === String(id);
+  }) || null;
 };
 
 // Get rows by field value
@@ -100,6 +108,7 @@ const append = async <T extends SheetRowData>(sheetName: SheetName, data: T): Pr
       spreadsheetId,
       range: `${sheetName}!A:Z`,
       valueInputOption: 'USER_ENTERED',
+      insertDataOption: 'INSERT_ROWS',
       requestBody: {
         values: [rowValues],
       },
@@ -116,7 +125,7 @@ const append = async <T extends SheetRowData>(sheetName: SheetName, data: T): Pr
 const update = async <T extends SheetRowData>(
   sheetName: SheetName,
   idField: string,
-  id: number,
+  id: string,
   updates: Partial<T>
 ): Promise<T | null> => {
   try {
@@ -135,7 +144,7 @@ const update = async <T extends SheetRowData>(
     // Find row index
     let rowIndex = -1;
     for (let i = 1; i < rows.length; i++) {
-      if (parseValue(rows[i][idIndex]) === id) {
+      if (String(parseValue(rows[i][idIndex])) === String(id)) {
         rowIndex = i;
         break;
       }
@@ -175,7 +184,7 @@ const update = async <T extends SheetRowData>(
 };
 
 // Delete a row by ID
-const deleteRow = async (sheetName: SheetName, idField: string, id: number): Promise<boolean> => {
+const deleteRow = async (sheetName: SheetName, idField: string, id: string): Promise<boolean> => {
   try {
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId,
@@ -192,7 +201,7 @@ const deleteRow = async (sheetName: SheetName, idField: string, id: number): Pro
     // Find row index
     let rowIndex = -1;
     for (let i = 1; i < rows.length; i++) {
-      if (parseValue(rows[i][idIndex]) === id) {
+      if (String(parseValue(rows[i][idIndex])) === String(id)) {
         rowIndex = i;
         break;
       }

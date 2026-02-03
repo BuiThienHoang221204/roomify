@@ -21,9 +21,9 @@ export async function GET(request: NextRequest) {
     let rentals;
 
     if (userId) {
-      rentals = await getRentalsByUserId(parseInt(userId, 10));
+      rentals = await getRentalsByUserId(userId);
     } else if (roomId) {
-      rentals = await getRentalsByRoomId(parseInt(roomId, 10));
+      rentals = await getRentalsByRoomId(roomId);
     } else if (status === 'active') {
       rentals = await getActiveRentals();
     } else {

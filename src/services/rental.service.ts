@@ -17,28 +17,28 @@ export const getAllRentals = async (): Promise<Rental[]> => {
 /**
  * Get rental by ID
  */
-export const getRentalById = async (id: number): Promise<Rental | null> => {
+export const getRentalById = async (id: string): Promise<Rental | null> => {
   return googleSheet.getById<Rental>(SHEET, ID_FIELD, id);
 };
 
 /**
  * Get rentals by user ID (tenant)
  */
-export const getRentalsByUserId = async (userId: number): Promise<Rental[]> => {
+export const getRentalsByUserId = async (userId: string): Promise<Rental[]> => {
   return googleSheet.getByField<Rental>(SHEET, 'user_id', userId);
 };
 
 /**
  * Get rentals by room ID
  */
-export const getRentalsByRoomId = async (roomId: number): Promise<Rental[]> => {
+export const getRentalsByRoomId = async (roomId: string): Promise<Rental[]> => {
   return googleSheet.getByField<Rental>(SHEET, 'room_id', roomId);
 };
 
 /**
  * Get active rental for a room
  */
-export const getActiveRentalByRoomId = async (roomId: number): Promise<Rental | null> => {
+export const getActiveRentalByRoomId = async (roomId: string): Promise<Rental | null> => {
   const rentals = await getRentalsByRoomId(roomId);
   return rentals.find((r) => r.status === RentalStatus.RENTING) || null;
 };
@@ -82,7 +82,7 @@ export const createRental = async (data: CreateRentalDTO): Promise<Rental> => {
 /**
  * Update rental
  */
-export const updateRental = async (id: number, data: UpdateRentalDTO): Promise<Rental | null> => {
+export const updateRental = async (id: string, data: UpdateRentalDTO): Promise<Rental | null> => {
   const updated = await googleSheet.update<Rental>(SHEET, ID_FIELD, id, data);
 
   // If rental ended, update room status to vacant
@@ -96,7 +96,7 @@ export const updateRental = async (id: number, data: UpdateRentalDTO): Promise<R
 /**
  * End rental
  */
-export const endRental = async (id: number): Promise<Rental | null> => {
+export const endRental = async (id: string): Promise<Rental | null> => {
   const now = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
   return updateRental(id, {
     end_date: now,
@@ -107,6 +107,6 @@ export const endRental = async (id: number): Promise<Rental | null> => {
 /**
  * Delete rental
  */
-export const deleteRental = async (id: number): Promise<boolean> => {
+export const deleteRental = async (id: string): Promise<boolean> => {
   return googleSheet.delete(SHEET, ID_FIELD, id);
 };

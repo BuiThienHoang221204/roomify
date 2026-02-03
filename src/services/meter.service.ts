@@ -16,14 +16,14 @@ export const getAllMeters = async (): Promise<Meter[]> => {
 /**
  * Get meter by ID
  */
-export const getMeterById = async (id: number): Promise<Meter | null> => {
+export const getMeterById = async (id: string): Promise<Meter | null> => {
   return googleSheet.getById<Meter>(SHEET, ID_FIELD, id);
 };
 
 /**
  * Get meters by rental ID
  */
-export const getMetersByRentalId = async (rentalId: number): Promise<Meter[]> => {
+export const getMetersByRentalId = async (rentalId: string): Promise<Meter[]> => {
   return googleSheet.getByField<Meter>(SHEET, 'rental_id', rentalId);
 };
 
@@ -31,7 +31,7 @@ export const getMetersByRentalId = async (rentalId: number): Promise<Meter[]> =>
  * Get meter by rental, type, and month
  */
 export const getMeterByRentalTypeMonth = async (
-  rentalId: number,
+  rentalId: string,
   type: MeterType,
   month: string
 ): Promise<Meter | null> => {
@@ -42,7 +42,7 @@ export const getMeterByRentalTypeMonth = async (
 /**
  * Get last meter reading for a rental and type
  */
-export const getLastMeterReading = async (rentalId: number, type: MeterType): Promise<Meter | null> => {
+export const getLastMeterReading = async (rentalId: string, type: MeterType): Promise<Meter | null> => {
   const meters = await getMetersByRentalId(rentalId);
   const filteredMeters = meters
     .filter((m) => m.type === type && m.confirmed)
@@ -83,14 +83,14 @@ export const createMeter = async (data: CreateMeterDTO): Promise<Meter> => {
 /**
  * Update meter reading
  */
-export const updateMeter = async (id: number, data: UpdateMeterDTO): Promise<Meter | null> => {
+export const updateMeter = async (id: string, data: UpdateMeterDTO): Promise<Meter | null> => {
   return googleSheet.update<Meter>(SHEET, ID_FIELD, id, data);
 };
 
 /**
  * Confirm meter reading
  */
-export const confirmMeter = async (id: number, newValue: number): Promise<Meter | null> => {
+export const confirmMeter = async (id: string, newValue: number): Promise<Meter | null> => {
   return updateMeter(id, {
     new_value: newValue,
     confirmed: true,
@@ -107,6 +107,6 @@ export const calculateConsumption = (meter: Meter): number => {
 /**
  * Delete meter reading
  */
-export const deleteMeter = async (id: number): Promise<boolean> => {
+export const deleteMeter = async (id: string): Promise<boolean> => {
   return googleSheet.delete(SHEET, ID_FIELD, id);
 };
