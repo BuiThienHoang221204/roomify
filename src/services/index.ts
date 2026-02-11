@@ -81,3 +81,12 @@ export {
   markIssueAsDone,
   deleteIssue,
 } from './issue.service';
+
+// Capture Token service
+export {
+  generateCaptureToken,
+  validateToken,
+  markTokenAsUsed,
+  getTokenInfo,
+  cleanupExpiredTokens,
+} from './captureToken.service';

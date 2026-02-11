@@ -36,7 +36,6 @@ const parseValue = (value: string | undefined): unknown => {
 };
 
 // Get all rows from a sheet
-
 const getAll = async <T extends SheetRowData>(sheetName: SheetName): Promise<T[]> => {
   try {
     const response = await sheets.spreadsheets.values.get({

@@ -924,6 +924,77 @@
           "path": ["api", "init"]
         }
       }
+    },
+    {
+      "name": "Capture",
+      "item": [
+        {
+          "name": "Request Capture Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-user-id",
+                "value": "user_2",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "tenant",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rental_id\": \"rental_1\",\n  \"meter_type\": \"electric\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/capture/token",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["api", "capture", "token"]
+            }
+          }
+        },
+        {
+          "name": "Upload Captured Image",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-user-id",
+                "value": "user_2",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "tenant",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"PASTE_TOKEN_HERE\",\n  \"image\": \"data:image/jpeg;base64,/9j/4AAQSkZJRg...\",\n  \"capture_timestamp\": \"2026-02-11T10:00:30.000Z\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/capture/upload",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["api", "capture", "upload"]
+            }
+          }
+        }
+      ]
     }
   ]
 }

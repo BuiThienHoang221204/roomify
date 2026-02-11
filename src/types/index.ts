@@ -4,6 +4,7 @@ export * from './rental';
 export * from './meter';
 export * from './invoice';
 export * from './issue';
+export * from './capture';
 
 // API Response type
 export interface ApiResponse<T = unknown> {
